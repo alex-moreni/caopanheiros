@@ -150,8 +150,10 @@ module.exports = class UserController {
 
     const {name, email, phone, password, confirmPassword} = req.body
 
-    let image = ""
-
+    if(req.file) {
+      user.image = req.file.filename
+    }
+    
     //Update Name
     if(!name) {
       res.status(422).json({message: "Name is required"})
