@@ -251,4 +251,29 @@ module.exports = class PetController {
       message: `Appointment made, please contact ${pet.user.name} by phone ${pet.user.phone}`
     })
   }
+
+  static async concludeAdoption(req, res) {
+    const {id} = req.params
+
+    const pet = await Pet.findById(id)
+    
+    if(!pet) {
+      res.status(422).json({message: "Pet not found"})
+      return
+    }
+
+    const token = getToken(req)
+    const user = await getUserByToken(token)
+
+    if(pet.user._id.toString() !== user.id.toString()) {
+      res.status(422).json({message: "Unauthorized"})
+      return
+    }
+
+    pet.available = false
+
+    await Pet.findByIdAndUpdate(id, pet)
+
+    return res.status(200).json({message: "Adoption finalized"})
+  }
 }
