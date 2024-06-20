@@ -146,4 +146,71 @@ module.exports = class PetController {
 
     return res.status(200).json({message: "Pet deleted"})
   }
+
+  static async updatePet(req, res) {
+    const {id} = req.params
+    const {name, age, weight, color, available} = req.body
+    const images = req.files
+
+    const updateData = {}
+
+    const pet = await Pet.findById(id)
+
+    if(!pet) {
+      res.status(422).json({message: "Pet not found"})
+      return
+    }
+
+    const token = getToken(req)
+    const user = await getUserByToken(token)
+
+    if(pet.user._id.toString() !== user.id.toString()) {
+      res.status(422).json({message: "Unauthorized"})
+      return
+    }
+
+    //validations
+    if(!name) {
+      res.status(422).json({message: "Name is required"})
+      return
+    } else {
+      updateData.name = name
+    }
+
+    if(!age) {
+      res.status(422).json({message: "Age is required"})
+      return
+    } else {
+      updateData.age = age
+    }
+
+    if(!weight) {
+      res.status(422).json({message: "Weight is required"})
+      return
+    } else {
+      updateData.weight = weight
+    }
+
+    if(!color) {
+      res.status(422).json({message: "Color is required"})
+      return
+    } else {
+      updateData.color = color
+    }
+
+    if(images.length === 0) {
+      res.status(422).json({message: "Images is required"})
+      return
+    } else {
+      updateData.images = []
+      images.map((image) => {
+        updateData.images.push(image.filename)
+      })
+    }
+
+    await Pet.findByIdAndUpdate(id, updateData)
+
+    return res.status(200).json({message: "Pet updated"})
+
+  }
 }
