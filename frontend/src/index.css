@@ -15,3 +15,10 @@ h1 {
   font-weight: bold;
   color: #3423A6;
 }
+
+.container {
+  min-height: 70vh;
+  padding: 1em 2em 3em;
+  max-width: 1200px;
+  margin: 0 auto;
+}
