@@ -1,15 +1,33 @@
+import { useContext, useState } from "react";
 import { Input } from "../../../components/Form/Input";
-
 import styles from "../../../components/Form/Form.module.css";
 import { Link } from "react-router-dom";
 
+import { UserContext } from "../../../context/UserContext";
+
 export function Register() {
-  function handleChange(e) {}
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmpassword: "",
+  });
+  const { register } = useContext(UserContext);
+
+  function handleChange(e) {
+    setUser({ ...user, [e.target.name]: e.target.value });
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    register(user);
+  }
 
   return (
     <section className={styles.form_container}>
       <h1>Registre-se</h1>
-      <form>
+      <form onSubmit={handleSubmit}>
         <Input
           text="Nome"
           type="text"
@@ -39,7 +57,7 @@ export function Register() {
           handleOnChange={handleChange}
         />
         <Input
-          text="Confirmação deSenha"
+          text="Confirmação de Senha"
           type="password"
           name="confirmpassword"
           placeholder="Confirme a sua senha"
